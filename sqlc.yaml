@@ -1,0 +1,11 @@
+version: '2'
+cloud:
+  project: '01HF3JH86P2CJBGA592GGXHH3J'
+sql:
+- schema: ./db/schema/
+  queries: ./db/query/
+  engine: postgresql
+  database:
+    managed: true
+  rules:
+  - sqlc/db-prepare
