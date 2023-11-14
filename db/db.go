@@ -22,6 +22,7 @@ func LoadConfigDb() string {
 
 type Queries interface {
 	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
 }
 
 type Db struct {
