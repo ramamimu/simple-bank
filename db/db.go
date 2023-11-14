@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -19,17 +20,16 @@ func LoadConfigDb() string {
 	return fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 }
 
-type TRX interface {
-	CreateAccount() Account
+type Queries interface {
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 }
 
 type Db struct {
-	conn *sql.DB
+	Queries
 }
 
-func NewDb(conn *sql.DB) Db {
-	return Db{
-		conn: conn,
+func NewDb(conn *sql.DB) *Db {
+	return &Db{
+		conn,
 	}
-
 }

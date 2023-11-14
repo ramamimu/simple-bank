@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -14,7 +15,7 @@ func TestCreateAccount(t *testing.T) {
 		Currency:  "1209",
 		CreatedAt: time.Now(),
 	}
-	account, err := db.CreateAccount(a)
+	account, err := trx.CreateAccount(context.Background(), a)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, account)

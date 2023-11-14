@@ -2,12 +2,13 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"testing"
 )
 
-var db Db
+var trx *STRX
 
 func TestMain(m *testing.M) {
 	config := LoadConfigDb()
@@ -19,7 +20,8 @@ func TestMain(m *testing.M) {
 	}
 	defer conn.Close()
 
-	db = NewDb(conn)
+	trx = NewTRX(conn)
+	fmt.Println("-> ", trx)
 
 	os.Exit(m.Run())
 }

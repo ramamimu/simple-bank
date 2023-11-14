@@ -1,17 +1,21 @@
 package db
 
-func (db *Db) CreateAccount(a Account) (Account, error) {
-	sqlStatement := `
-		INSERT INTO accounts (owner, balance, currency, created_at)
-		VALUES ($1, $2, $3, $4)
-		RETURNING *`
+import (
+	"context"
+	"database/sql"
+)
 
-	var acc Account
-	err := db.conn.QueryRow(sqlStatement, a.Owner, a.Balance, a.Currency, a.CreatedAt).Scan(&acc.ID, &acc.Owner, &acc.Balance, &acc.Currency, &acc.CreatedAt)
+type TRX interface {
+	CreateAccount(ctx context.Context, a Account) (Account, error)
+}
 
-	if err != nil {
-		return acc, err
+type STRX struct {
+	db *Db
+	TRX
+}
+
+func NewTRX(conn *sql.DB) *STRX {
+	return &STRX{
+		db: NewDb(conn),
 	}
-
-	return acc, nil
 }
