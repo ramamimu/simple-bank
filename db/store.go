@@ -11,7 +11,6 @@ type TRX interface {
 
 type STRX struct {
 	db *Db
-	TRX
 }
 
 func NewTRX(conn *sql.DB) *STRX {

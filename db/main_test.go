@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-var trx *STRX
+var trx TRX
 
 func TestMain(m *testing.M) {
 	config := LoadConfigDb()
