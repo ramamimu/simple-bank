@@ -3,16 +3,16 @@ init:
 	docker exec -ti postgres_simplebank psql -U postgres -c "CREATE DATABASE simplebank"
 	migrate -path=./db/migration -database postgres://postgres:postgres@localhost:5432/simplebank?sslmode=disable -verbose up
 
-startdb:
+dbstart:
 	docker compose -f ./docker-compose/postgres.yaml up -d
 
-stopdb:
+dbstop:
 	docker compose -f ./docker-compose/postgres.yaml down
 
-createdb:
+dbcreate:
 	docker exec -ti postgres_simplebank psql -U postgres -c "CREATE DATABASE simplebank"
 
-dropdb:
+dbdrop:
 	docker exec -ti postgres_simplebank psql -U postgres -c "DROP DATABASE simplebank"
 
 migrateup:

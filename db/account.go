@@ -55,7 +55,7 @@ OFFSET $3
 `
 
 func (s *STRX) ListAccount(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
-	rows, err := s.db.QueryContext(ctx, listAccounts)
+	rows, err := s.db.QueryContext(ctx, listAccounts, arg.Owner, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
