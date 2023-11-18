@@ -84,3 +84,31 @@ func (s *STRX) ListAccount(ctx context.Context, arg ListAccountsParams) ([]Accou
 
 	return items, nil
 }
+
+type UpdateAccountParam struct {
+	ID      int64 `json:"id"`
+	Balance int64 `json:"balance"`
+}
+
+const updateAccount = `
+UPDATE accounts 
+SET balance = $2
+WHERE id = $1
+RETURNING id, owner, balance, currency, created_at 
+`
+
+func (s *STRX) UpdateAccount(ctx context.Context, arg UpdateAccountParam) (Account, error) {
+	row := s.db.Queries.QueryRowContext(ctx, updateAccount, arg.ID, arg.Balance)
+
+	var a Account
+	if err := row.Scan(
+		&a.ID,
+		&a.Owner,
+		&a.Balance,
+		&a.Currency,
+		&a.CreatedAt,
+	); err != nil {
+		return a, err
+	}
+	return a, nil
+}

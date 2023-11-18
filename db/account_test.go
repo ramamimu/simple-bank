@@ -59,3 +59,27 @@ func TestListAccount(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, len(l) >= 3)
 }
+
+func TestUpdateAccount(t *testing.T) {
+	p := []UpdateAccountParam{
+		{
+			ID:      1,
+			Balance: 99,
+		},
+		{
+			ID:      2,
+			Balance: 98,
+		},
+		{
+			ID:      3,
+			Balance: 97,
+		},
+	}
+
+	for _, i := range p {
+		a, err := trx.UpdateAccount(context.Background(), i)
+		assert.NoError(t, err)
+		assert.Equal(t, i.Balance, a.Balance)
+		assert.Equal(t, i.ID, a.ID)
+	}
+}
