@@ -50,12 +50,14 @@ const listAccounts = `
 SELECT id, owner, balance, currency, created_at FROM accounts
 WHERE owner = $1
 ORDER BY id
-LIMIT $2
-OFFSET $3
 `
 
+// LIMIT $2
+// OFFSET $3
+
 func (s *STRX) ListAccount(ctx context.Context, arg ListAccountsParams) ([]Account, error) {
-	rows, err := s.db.QueryContext(ctx, listAccounts, arg.Owner, arg.Limit, arg.Offset)
+	// rows, err := s.db.QueryContext(ctx, listAccounts, arg.Owner, arg.Limit, arg.Offset)
+	rows, err := s.db.QueryContext(ctx, listAccounts, arg.Owner)
 	if err != nil {
 		return nil, err
 	}
