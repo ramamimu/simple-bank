@@ -6,10 +6,30 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/suite"
+)
+
+const (
+	defaultAccount = 5
 )
 
 var trx TRX
 var conn *sql.DB
+
+type AccountTest struct {
+	suite.Suite
+	db *sql.DB
+}
+
+func TestAccountTest(t *testing.T) {
+	suite.Run(t, &AccountTest{})
+}
+
+func (at *AccountTest) SetupSuite() {
+	at.db = conn
+}
 
 func truncateTableAccount() {
 	const truncateTableAccount = `
@@ -42,11 +62,25 @@ func truncateTableAccount() {
 	const resetSequence = `
 	ALTER SEQUENCE accounts_id_seq RESTART WITH 1
 	`
+
 	_, errReset := conn.QueryContext(context.Background(), resetSequence)
 	if errReset != nil {
 		log.Fatal("errpr when reset sequence", err)
 	}
 
+	// create account
+	a := AccountParams{
+		Owner:     globalOwner,
+		Balance:   100,
+		Currency:  "IDR",
+		CreatedAt: time.Now(),
+	}
+	for i := 0; i < defaultAccount; i++ {
+		_, err := trx.CreateAccount(context.Background(), a)
+		if err != nil {
+			log.Fatal("errpr when create account ", err)
+		}
+	}
 }
 
 func TestMain(m *testing.M) {
@@ -59,9 +93,8 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect db due to: ", err)
 	}
 	defer conn.Close()
-
+	trx = NewTRX(conn)
 	truncateTableAccount()
 
-	trx = NewTRX(conn)
 	os.Exit(m.Run())
 }

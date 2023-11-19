@@ -77,7 +77,7 @@ func (atc *AccountTestComunal) ListAccount() {
 	l, err := trx.ListAccount(context.Background(), p)
 
 	assert.NoError(atc.t, err)
-	assert.True(atc.t, len(l) >= 3)
+	assert.True(atc.t, len(l) >= defaultAccount)
 }
 
 func (atc *AccountTestComunal) UpdateAccount() {

@@ -2,26 +2,9 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"math/rand"
-	"testing"
 	"time"
-
-	"github.com/stretchr/testify/suite"
 )
-
-type AccountTest struct {
-	suite.Suite
-	db *sql.DB
-}
-
-func TestAccountTest(t *testing.T) {
-	suite.Run(t, &AccountTest{})
-}
-
-func (at *AccountTest) SetupSuite() {
-	at.db = conn
-}
 
 func (at *AccountTest) TestAccount() {
 	a := AccountParams{

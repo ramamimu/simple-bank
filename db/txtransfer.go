@@ -23,6 +23,11 @@ type TransferTxParams struct {
 func (s *STRX) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var tfr TransferTxResult
 	err := s.execTx(ctx, func(tx *sql.Tx) error {
+		// add transfer
+		// add entries to account
+		// add entries from account
+		// update to account
+		// update from account
 		fmt.Println("Hello World")
 		return nil
 	})

@@ -25,6 +25,7 @@ migrateforce:
 	migrate -path=./db/migration -database postgres://postgres:postgres@localhost:5432/simplebank?sslmode=disable -verbose force $(version)
 
 test:
+	go clean -testcache
 	go test -v -cover ./...
 
 sqlc:

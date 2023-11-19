@@ -12,6 +12,8 @@ type TRX interface {
 	ListAccount(ctx context.Context, arg ListAccountsParams) ([]Account, error)
 	UpdateAccount(ctx context.Context, arg UpdateAccountParam) (Account, error)
 	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+	CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error)
+	CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error)
 }
 
 type STRX struct {
