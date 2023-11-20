@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
 )
 
 type TransferTxResult struct {
@@ -24,11 +23,50 @@ func (s *STRX) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 	var tfr TransferTxResult
 	err := s.execTx(ctx, func(tx *sql.Tx) error {
 		// add transfer
-		// add entries to account
+		_, err := s.CreateTransfer(context.Background(), CreateTransferParams(arg))
+
+		if err != nil {
+			return err
+		}
+
 		// add entries from account
-		// update to account
+		entryFrom, errEntryFrom := s.CreateEntry(context.Background(), CreateEntryParams{
+			AccountID: arg.FromAccountID,
+			Amount:    -arg.Amount,
+		})
+
+		if errEntryFrom != nil {
+			return err
+		}
+
+		// add entries to account
+		entryTo, errEntryTo := s.CreateEntry(context.Background(), CreateEntryParams{
+			AccountID: arg.ToAccountID,
+			Amount:    -arg.Amount,
+		})
+
+		if errEntryTo != nil {
+			return err
+		}
+
 		// update from account
-		fmt.Println("Hello World")
+		_, errUpdateFrom := s.UpdateAccount(context.Background(), UpdateAccountParam{
+			ID:      arg.FromAccountID,
+			Balance: entryFrom.Amount - arg.Amount,
+		})
+		if errUpdateFrom != nil {
+			return err
+		}
+
+		// update to account
+		_, errUpdateTo := s.UpdateAccount(context.Background(), UpdateAccountParam{
+			ID:      arg.ToAccountID,
+			Balance: entryTo.Amount + arg.Amount,
+		})
+		if errUpdateTo != nil {
+			return err
+		}
+
 		return nil
 	})
 	return tfr, err
