@@ -84,15 +84,15 @@ func (atc *AccountTestComunal) UpdateAccount() {
 	p := []UpdateAccountParam{
 		{
 			ID:      1,
-			Balance: 99,
+			Balance: 11000,
 		},
 		{
 			ID:      2,
-			Balance: 98,
+			Balance: 12000,
 		},
 		{
 			ID:      3,
-			Balance: 97,
+			Balance: 13000,
 		},
 	}
 

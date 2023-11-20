@@ -71,7 +71,7 @@ func truncateTableAccount() {
 	// create account
 	a := AccountParams{
 		Owner:     globalOwner,
-		Balance:   100,
+		Balance:   10000,
 		Currency:  "IDR",
 		CreatedAt: time.Now(),
 	}

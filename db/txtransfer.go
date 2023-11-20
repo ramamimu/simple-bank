@@ -20,17 +20,20 @@ type TransferTxParams struct {
 }
 
 func (s *STRX) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
-	var tfr TransferTxResult
-	err := s.execTx(ctx, func(tx *sql.Tx) error {
+	var trf TransferTxResult
+	// trf := make(chan TransferTxResult)
+	err := s.execTx(context.Background(), func(tx *sql.Tx) error {
 		// add transfer
-		_, err := s.CreateTransfer(context.Background(), CreateTransferParams(arg))
+		var err error
+		trf.Transfer, err = s.CreateTransfer(context.Background(), CreateTransferParams(arg))
 
 		if err != nil {
 			return err
 		}
 
 		// add entries from account
-		entryFrom, errEntryFrom := s.CreateEntry(context.Background(), CreateEntryParams{
+		var errEntryFrom error
+		trf.FromEntry, errEntryFrom = s.CreateEntry(context.Background(), CreateEntryParams{
 			AccountID: arg.FromAccountID,
 			Amount:    -arg.Amount,
 		})
@@ -40,9 +43,10 @@ func (s *STRX) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 		}
 
 		// add entries to account
-		entryTo, errEntryTo := s.CreateEntry(context.Background(), CreateEntryParams{
+		var errEntryTo error
+		trf.ToEntry, errEntryTo = s.CreateEntry(context.Background(), CreateEntryParams{
 			AccountID: arg.ToAccountID,
-			Amount:    -arg.Amount,
+			Amount:    arg.Amount,
 		})
 
 		if errEntryTo != nil {
@@ -50,18 +54,20 @@ func (s *STRX) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 		}
 
 		// update from account
-		_, errUpdateFrom := s.UpdateAccount(context.Background(), UpdateAccountParam{
-			ID:      arg.FromAccountID,
-			Balance: entryFrom.Amount - arg.Amount,
+		var errUpdateFrom error
+		trf.FromAccount, errUpdateFrom = s.AddAccountBalance(context.Background(), AddAccountBalanceParams{
+			ID:     arg.FromAccountID,
+			Amount: -arg.Amount,
 		})
 		if errUpdateFrom != nil {
 			return err
 		}
 
 		// update to account
-		_, errUpdateTo := s.UpdateAccount(context.Background(), UpdateAccountParam{
-			ID:      arg.ToAccountID,
-			Balance: entryTo.Amount + arg.Amount,
+		var errUpdateTo error
+		trf.ToAccount, errUpdateTo = s.AddAccountBalance(context.Background(), AddAccountBalanceParams{
+			ID:     arg.ToAccountID,
+			Amount: arg.Amount,
 		})
 		if errUpdateTo != nil {
 			return err
@@ -69,5 +75,6 @@ func (s *STRX) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTx
 
 		return nil
 	})
-	return tfr, err
+
+	return trf, err
 }
