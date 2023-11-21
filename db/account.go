@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -131,5 +132,8 @@ func (s *STRX) AddAccountBalance(ctx context.Context, arg AddAccountBalanceParam
 		&i.Currency,
 		&i.CreatedAt,
 	)
+	if i.Balance < 0 {
+		return i, fmt.Errorf("balance from id %d less than 0", i.ID)
+	}
 	return i, err
 }

@@ -107,3 +107,30 @@ func (ac *AccountTest) TestAsyncTransferTx() {
 		ac.NoError(err)
 	}
 }
+
+func (ac *AccountTest) TestOutOfRange() {
+	account, err := trx.CreateAccount(context.Background(), AccountParams{
+		Owner:    "kasuari",
+		Balance:  99,
+		Currency: "IDR",
+	})
+	ac.NoError(err)
+
+	_, errAccBalance := trx.AddAccountBalance(context.Background(), AddAccountBalanceParams{
+		ID:     account.ID,
+		Amount: -100,
+	})
+	ac.Error(errAccBalance)
+
+	preAddBalance, errPreAddBalance := trx.GetAccount(context.Background(), account.ID)
+	amount := 100
+	accBalance2, errAccBalance2 := trx.AddAccountBalance(context.Background(), AddAccountBalanceParams{
+		ID:     account.ID,
+		Amount: int64(amount),
+	})
+	ac.NoError(errPreAddBalance)
+	ac.NoError(errAccBalance2)
+	ac.Equal(preAddBalance.ID, account.ID)
+	ac.Equal(preAddBalance.Currency, accBalance2.Currency)
+	ac.Equal(accBalance2.Balance, preAddBalance.Balance+int64(amount))
+}
