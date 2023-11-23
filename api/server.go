@@ -6,17 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Server struct {
-	port string
+var (
+	port = ":9090"
+)
+
+type Server struct{}
+
+func (s *Server) SetupRouter() *gin.Engine {
+	router := gin.Default()
+	router.GET("/ping", s.handlePing)
+	return router
 }
 
-func (s *Server) Start() {
-	router := gin.Default()
-	router.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
-	router.Run(s.port)
+func (s *Server) handlePing(ctx *gin.Context) {
+	ctx.String(http.StatusOK, "pong")
 }
